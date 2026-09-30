@@ -119,7 +119,7 @@ Final end-to-end check:
 
 ## Environment notes
 
-- Bun is not installed on the personal machine. Install it with Homebrew in PR 2, since it is needed for the `marius-mode` script tests.
+- Bun is installed at `/opt/homebrew/bin/bun`. It runs the `marius-mode` script tests.
 - Work happens in `~/code/tstack`. `~/code/pstack` stays untouched as the reference copy.
 - Inside the Claude Code sandbox, `gh` and `git` over HTTPS fail TLS verification, so network git operations run outside the sandbox.
 
