@@ -1,0 +1,22 @@
+name: check
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: oven-sh/setup-bun@v2
+      - run: node --test scripts/*.test.mjs
+      - run: node scripts/check.mjs
+      - run: bun install --frozen-lockfile
+        working-directory: skills/marius-mode/scripts
+      - run: bun run test
+        working-directory: skills/marius-mode/scripts
+      - run: bun run typecheck
+        working-directory: skills/marius-mode/scripts
