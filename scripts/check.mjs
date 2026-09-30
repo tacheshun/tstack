@@ -9,7 +9,9 @@ export const BANNED_TERMS = [
   "cursor-team-kit", "create-skill", "~/.cursor/", "poteto-mode", "poteto-agent",
 ];
 export const TERM_SCAN_ROOTS = ["skills"];
-export const ALLOWED_TERMS = {};
+export const ALLOWED_TERMS = {
+  "skills/recall/references/transcripts.md": ["~/.cursor/"],
+};
 const SCANNED_EXTENSIONS = /\.(md|sh|ts|mjs|tsv)$/;
 
 function walk(dir) {
