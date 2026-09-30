@@ -23,7 +23,9 @@ flowchart TD
     J --> K
 ```
 
-The diagram shows the common routes. There are also playbooks for hillclimbing a metric, diagnosing runtime symptoms and captured traces, prototypes, visual parity, authoring and evaluating skills, autonomous runs, babysitting a PR or stack to merge-ready, shipping a verified stack, running a PR queue on autopilot, orchestrating project-scale programs, session pickup, pausing safely, multi-phase plans, and worktree cleanup. The [playbook directory](../../skills/marius-mode/playbooks/) has the full set.
+The diagram shows the common routes. There are also playbooks for hillclimbing a metric, diagnosing runtime symptoms and captured traces, prototypes, visual parity, authoring and evaluating skills, autonomous runs, babysitting a PR or stack to merge-ready, shipping a verified stack, building a verified PR stack on autopilot, session pickup, pausing safely, multi-phase plans, and worktree cleanup. The [playbook directory](../../skills/marius-mode/playbooks/) has the full set.
+
+Two gates sit around every route. Non-trivial or greenfield work starts with a short plan: the approach, the files it touches, and each open decision with a recommended option. After your go, it runs to a ready change without checking in. It stops again before anything leaves your machine, such as a push, a PR, or a message, and you merge PRs yourself. Small fixes skip the plan.
 
 ## Say the goal, not the ceremony
 
@@ -49,7 +51,7 @@ continue
 keep going until done
 ```
 
-Short works because the mode is sticky and the playbook holds the structure. Your words carry the intent, and the skill carries the rigor.
+Short works because the playbook holds the structure. Your words carry the intent, and the skill carries the rigor.
 
 ## Switch tasks with "new task"
 
