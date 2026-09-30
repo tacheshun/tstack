@@ -1,38 +1,54 @@
-# Set up pstack
+# Set up tstack
 
-In this page you install the plugin, pick which models pstack uses, and run your first task. Setup is one command plus a short conversation.
+In this page you install the skills into your harness, optionally turn on cross-vendor review, and run your first task.
 
-## Install the plugin
+## Install the skills
 
-In a Cursor chat, run:
+tstack is a folder of standard `SKILL.md` skills, so one installer covers every harness. Run:
 
-```text
-/add-plugin pstack
+```bash
+npx skills add tacheshun/tstack -g -s '*' -a claude-code codex github-copilot cursor
 ```
 
-Cursor confirms the plugin is installed.
+- `-g` installs for your user, so every project sees the skills. Leave it out to install into the current project only.
+- `-s '*'` installs all skills without asking which ones.
+- `-a` names the harnesses. Drop the ones you don't use.
 
-## Pick your models
+The skills land once in `~/.agents/skills/`. Codex, GitHub Copilot, and Cursor read that folder directly. Claude Code gets symlinks in `~/.claude/skills/`. To update later, run `npx skills update -g`.
 
-Run:
+Check the install in your harness:
+
+| Harness | Check |
+|---|---|
+| Claude Code | Type `/` and look for `/marius-mode`. |
+| Codex | Ask "what skills do you have?" |
+| GitHub Copilot CLI | Run `/skills`. |
+| Cursor | Type `/` in a chat and look for `/marius-mode`. |
+
+Some harnesses ignore the flag that keeps a skill slash-only. Each skill's description names its own command, so it matches only when you ask for it.
+
+## Models
+
+tstack does not configure models. Each skill names a role (the strongest model, the default model, or a fast one), and your harness picks its own model for that role. In Claude Code that means Opus, Sonnet, or Haiku. In Codex it means OpenAI models.
+
+## Turn on cross-vendor review, or don't
+
+Review panels such as `/interrogate` find more when reviewers come from different model families. Your harness's subagents all come from one vendor, so tstack can add reviewers by calling other vendors' CLIs. It only calls the CLIs you allow on this machine.
+
+Create `~/.config/tstack/bridge` with one CLI per line:
 
 ```text
-/setup-pstack
+# personal machine
+claude
+codex
 ```
 
-`/setup-pstack` (not in tstack) detects the models you have access to, asks for a reasoning budget, shows you each role (code delegates, judgment, the review panels), and asks what you want. Answer the questions. It writes `~/.cursor/rules/pstack-models.mdc`, a small rule every pstack skill reads.
+```text
+# work machine: only the approved vendor
+copilot
+```
 
-You only override what you care about. A role with no line in the rule keeps the skill's default. To restore a default, delete that role's line. A rerun of `/setup-pstack` keeps any role whose model differs from the default. A rule written before 0.15.3 pins the old default models, so delete those role lines, or delete the file, then run `/setup-pstack` again.
-
-You might be wondering what happens if you use Auto. Set a role to `inherit-parent` or `auto` and pstack omits the subagent `model` field, so the subagent inherits your parent chat model. Both values mean the same thing, and neither is a model slug. For a panel role the value is a list, and one subagent runs per entry, so the list length sets the panel size. Setup also configures `swarm workers`, the default model for every `/swarm` worker unless a race names a model for each arm.
-
-## Accept the verification offer, or don't
-
-At the end of setup, `/setup-pstack` looks for a way to prove app behavior in your project, either a `verify-*` skill or an existing harness. If it finds neither, it offers once to generate one with [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md).
-
-Say yes and it writes `.cursor/skills/verify-<app>/`, a project-local skill that teaches agents to drive your app the way a user does. It proves the skill works once before handing it over. Say no and setup moves on. You can run `/create-verification-skill` yourself any time. [Verify and ship](./06-verify-and-ship.md#create-a-project-verification-skill) covers when it earns its place.
-
-After setup, start a new chat. The model rule applies to new sessions.
+With no file, the bridge is off and panels run on your harness's own models. That default is safe on any machine. The exact commands are in [the bridge reference](../../skills/interrogate/references/bridge.md).
 
 ## Run your first task
 
@@ -44,6 +60,6 @@ Pick something real but small, and describe it the way you'd describe it to a co
 
 Watch the todo list. Its first items are the matched playbook's steps copied in, the Feature playbook for this prompt. If `/marius-mode` skips a step, the step stays in the list with `skip: <reason>`, so you can see what it chose not to do.
 
-From here you can type normal follow-ups. `/marius-mode` is sticky. It stays on for the conversation until you opt out by saying so.
+`/marius-mode` applies to the task you invoke it with. Start the next task with `/marius-mode` again when you want the same rigor.
 
 Next: [Route work through `/marius-mode`](./02-marius-mode.md).

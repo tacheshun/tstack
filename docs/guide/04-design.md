@@ -38,7 +38,7 @@ flowchart LR
     H --> I[Verify]
 ```
 
-The panel comes from your `/setup-pstack` (not in tstack) configuration, and you can adjust it per task. Ask for more candidates when the decision matters, fewer when it doesn't:
+The panel runs on your harness's models, plus other vendors' CLIs if you allowed them in `~/.config/tstack/bridge` ([Set up tstack](./01-setup.md#turn-on-cross-vendor-review-or-dont)). Adjust it per task. Ask for more candidates when the decision matters, fewer when it doesn't:
 
 ```text
 /arena this, 5 candidates. the cache key format is expensive to change later.

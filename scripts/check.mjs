@@ -9,7 +9,7 @@ export const BANNED_TERMS = [
   "cursor-team-kit", "create-skill", "~/.cursor/", "poteto-mode", "poteto-agent",
   "grok-", "gpt-5", "claude-opus-", "deslop", "control-ui", "control-cli", "\u2014",
 ];
-export const TERM_SCAN_ROOTS = ["skills"];
+export const TERM_SCAN_ROOTS = ["skills", "docs/guide"];
 export const ALLOWED_TERMS = {
   "skills/recall/references/transcripts.md": ["~/.cursor/"],
 };
