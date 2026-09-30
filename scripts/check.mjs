@@ -3,7 +3,10 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const PORTABLE_KEYS = new Set(["name", "description", "license", "allowed-tools", "disable-model-invocation"]);
+export const PORTABLE_KEYS = new Set([
+  "name", "description", "license", "compatibility", "metadata", "allowed-tools", "disable-model-invocation",
+]);
+const SKILL_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 export const BANNED_TERMS = [
   "AskQuestion", "Task tool", "subagent_type", "generalPurpose", "pstack-models", "setup-pstack",
   "cursor-team-kit", "create-skill", "~/.cursor/", "poteto-mode", "poteto-agent",
@@ -39,7 +42,7 @@ export function parseFrontmatter(text) {
     const match = line.match(/^([A-Za-z][\w-]*):\s*(.*)$/);
     if (match) {
       key = match[1];
-      fields[key] = match[2].trim();
+      fields[key] = match[2].trim().replace(/^(["'])(.*)\1$/, "$2");
     } else if (key && /^\s+\S/.test(line)) {
       fields[key] = `${fields[key]} ${line.trim()}`.trim();
     }
@@ -65,7 +68,13 @@ function checkSkillFrontmatter(root, dir, errors) {
   const fields = parseFrontmatter(readFileSync(path, "utf8"));
   if (!fields) return errors.push(`${rel}:1: missing frontmatter`);
   if (fields.name !== dir) errors.push(`${rel}:1: name "${fields.name ?? ""}" must equal directory "${dir}"`);
+  else if (!SKILL_NAME.test(dir) || dir.length > 64) {
+    errors.push(`${rel}:1: name "${dir}" must be lowercase letters, digits, and single hyphens, max 64 characters`);
+  }
   if (!fields.description) errors.push(`${rel}:1: missing description`);
+  else if (fields.description.length > 1024) {
+    errors.push(`${rel}:1: description is ${fields.description.length} characters, max 1024`);
+  }
   for (const key of Object.keys(fields)) {
     if (!PORTABLE_KEYS.has(key)) errors.push(`${rel}:1: non-portable frontmatter key "${key}"`);
   }

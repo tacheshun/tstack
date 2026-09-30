@@ -112,3 +112,15 @@ test("Cursor project skill paths and /goal are banned terms", () => {
     'skills/alpha/SKILL.md:6: banned term "/goal"',
   ]);
 });
+
+test("names and descriptions follow the Agent Skills spec limits", () => {
+  const long = "x".repeat(1025);
+  const root = fixture({
+    "skills/bad--name/SKILL.md": skill("bad--name"),
+    "skills/alpha/SKILL.md": `---\nname: alpha\ndescription: "${long}"\ncompatibility: Needs git\nmetadata:\n  author: x\n---\nBody\n`,
+  });
+  assert.deepEqual(check(root), [
+    "skills/alpha/SKILL.md:1: description is 1025 characters, max 1024",
+    'skills/bad--name/SKILL.md:1: name "bad--name" must be lowercase letters, digits, and single hyphens, max 64 characters',
+  ]);
+});
