@@ -7,11 +7,11 @@ export const PORTABLE_KEYS = new Set(["name", "description", "license", "allowed
 export const BANNED_TERMS = [
   "AskQuestion", "Task tool", "subagent_type", "generalPurpose", "pstack-models", "setup-pstack",
   "cursor-team-kit", "create-skill", "~/.cursor/", "poteto-mode", "poteto-agent",
-  "grok-", "gpt-5", "claude-opus-", "deslop", "control-ui", "control-cli", "\u2014",
+  "grok-", "gpt-5", "claude-opus-", "deslop", "control-ui", "control-cli", "\u2014", ".cursor/skills", "/goal",
 ];
 export const TERM_SCAN_ROOTS = ["skills", "docs/guide"];
 export const ALLOWED_TERMS = {
-  "skills/recall/references/transcripts.md": ["~/.cursor/"],
+  "skills/recall/references/transcripts.md": ["~/.cursor/", ".cursor/skills"],
 };
 const SCANNED_EXTENSIONS = /\.(md|sh|ts|mjs|tsv)$/;
 

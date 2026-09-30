@@ -12,7 +12,7 @@ The Principles section below grounds every trigger. In your reply, name each pri
 
 Remaining triggers:
 
-- Non-trivial or greenfield work → write a short plan first: the approach, the files touched, and each open decision with a recommended option. Wait for the go, then run to a ready PR without check-ins. Small fixes skip the plan.
+- Non-trivial or greenfield work → write a short plan first: the approach, the files touched, and each open decision with a recommended option. Wait for the go, then run without check-ins to a committed, verified local branch. Small fixes skip the plan.
 - The user names a scope or a phase ("don't write code yet", "only the parser") → stay inside it literally. No extra features, compatibility layers, or neighboring changes.
 - Asked to review or assess → findings only, bottom line first, no code changes unless asked.
 - Nontrivial change, architecture decision, or "are we sure?" → the **how** skill.
@@ -85,19 +85,21 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 **Always pause** for anything that leaves the machine or can't be undone: git push, opening or merging a PR, force-push, deploys, data deletion, and messages to people. The user reviews and merges PRs.
 
+**What counts as the go.** Pushing, opening PRs, and fanning out many subagents each need an explicit go, and one go can cover all three. Invoking a playbook whose deliverable is pushed branches or open PRs (Babysit, Shipping, Autopilot-stack) grants push and PR creation for that work. So does approving a plan that says it will push or open PRs. Either also approves the fan-out that playbook or plan names. Without that grant, stop at the committed local branch and ask. Merging stays with the user unless they say otherwise.
+
 **Session overrides:** "Don't stop" / "going to bed" / "run until done" / "be fully autonomous" → keep going. These do not lift the push and PR pause unless the user says so explicitly.
 
 **No is an acceptable answer.** Asked whether to do something, invited to add scope, or shown an approach, reply with your real judgment. Decline, push back, or say "this doesn't earn its place" when true. A recommendation is a judgment, not a validation. Agreement is not the default, candor over sycophancy.
 
 ## Subagents
 
-**Default to working inline.** Spawn subagents for bulk reading, clear parallelism, or an independent review. A playbook step that says to delegate code is optional: do it in the main session unless the change is large and mechanical enough that a delegate saves real context. One harness writes code in a repo. Other model families review and debate.
+**Default to working inline.** Spawn subagents for bulk reading, clear parallelism, or an independent review. A playbook step that says to delegate code is optional: do it in the main session unless the change is large and mechanical enough that a delegate saves real context. One harness writes code in a repo. Other model families review and debate, only through [the bridge](../interrogate/references/bridge.md). With the bridge off, use a fresh host subagent and say the review was same-family.
 
-**Subagents you spawn inside a playbook step start by reading this file.** Make the first line of every such prompt: "Read `skills/marius-mode/SKILL.md` in full, including the Principles index, before any work." Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`) write their own subagent prompts. Respect them.
+**Subagents you spawn inside a playbook step start by reading this file.** Make the first line of every such prompt tell it to read this `SKILL.md` in full, including the Principles index, before any work. Give the absolute path of the copy you loaded (for example `~/.agents/skills/marius-mode/SKILL.md`), since the target repo usually has no `skills/` folder. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`) write their own subagent prompts. Respect them.
 
 **Defaults for every subagent spawn.** Run it in the background if the harness supports it, with full tool access (a read-only mode that strips MCP tools breaks lookups), file pointers instead of inlined context, and an explicit model role. Code delegates tier by difficulty. The hardest changes (cross-cutting design, gnarly concurrency, subtle algorithms) go to the strongest model, whether the task needs judgment on vague intent or is a precisely specified sequence of steps to execute to the letter. Trivial mechanical edits go to the fast model. Prose and judgment use the strongest model.
 
-You own every subagent's work. Review the diff and write your own summary, don't pass through what it said. Interrupt-chained resumes silently drop directives, so fire a fresh subagent with consolidated scope rather than trusting a "done" summary. A second opinion is the same prompt against a different model. Agreement is high-signal.
+You own every subagent's work. Review the diff and write your own summary, don't pass through what it said. Interrupt-chained resumes silently drop directives, so fire a fresh subagent with consolidated scope rather than trusting a "done" summary. A second opinion is the same prompt against a different model, through the bridge when it allows one. Agreement is high-signal.
 
 ## Writing the reply
 

@@ -104,3 +104,11 @@ test("the em dash character is a banned term", () => {
   const root = fixture({ "skills/alpha/SKILL.md": skill("alpha", "Fast \u2014 and wrong.\n") });
   assert.deepEqual(check(root), ['skills/alpha/SKILL.md:6: banned term "\u2014"']);
 });
+
+test("Cursor project skill paths and /goal are banned terms", () => {
+  const root = fixture({ "skills/alpha/SKILL.md": skill("alpha", "Write .cursor/skills/verify-app, then arm a /goal.\n") });
+  assert.deepEqual(check(root), [
+    'skills/alpha/SKILL.md:6: banned term ".cursor/skills"',
+    'skills/alpha/SKILL.md:6: banned term "/goal"',
+  ]);
+});
