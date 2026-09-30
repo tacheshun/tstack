@@ -38,6 +38,8 @@ One message, three subagent spawns, each on the model role below with full tool 
 
 Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in their final response.
 
+Add a bridged Tooling reviewer per [the bridge](../interrogate/references/bridge.md), with the same template, when it lists a CLI from another model family.
+
 ### 3. Synthesize
 
 Spawn one subagent on the strongest model with full tool access, including MCP tools. The synthesizer's quality check includes spot-verifying citations, which can require MCP access. A read-only mode that strips MCP tools defeats it. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.

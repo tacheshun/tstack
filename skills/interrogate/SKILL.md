@@ -49,12 +49,14 @@ Read `references/reviewer-prompt.md` and fill in the template with:
 
 The same filled template goes to all reviewers, so every reviewer applies the code-quality lens. Append one line naming the reviewer's own lens from the table.
 
+Then add bridged reviewers per [the bridge](references/bridge.md). Each gets the same filled template. Label them by family ("Reviewer D, OpenAI via codex").
+
 ## Step 4, Synthesize
 
 As results come back, build a unified picture:
 
 1. **Parse all findings** from the reviewers
-2. **Identify consensus**. Findings raised by 2+ reviewers independently are highest signal.
+2. **Identify consensus**. Findings raised independently by 2+ reviewers are highest signal, and agreement across model families highest of all.
 3. **Identify lone-reviewer findings**. Still worth reading, but weight accordingly.
 4. **Deduplicate**. Different reviewers may describe the same issue differently. Merge these and note which reviewers raised it.
 5. **Note disagreements**. If one reviewer flags something and another explicitly says the opposite, that's useful context for the verdict.
@@ -85,7 +87,8 @@ Present the verdict in this structure:
 > [The stated intent paragraph from Step 2]
 
 ### Reviewers
-- Reviewer [label]: [lens], [N findings] (one bullet per reviewer)
+- Reviewer [label]: [lens or model family], [N findings]
+- Bridge: off, or the members that ran and any dropped with the reason (one bullet per reviewer)
 
 ### Act On
 [Findings that should be addressed. For each: description, which reviewers raised it, why it matters.]
