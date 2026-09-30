@@ -2,7 +2,7 @@
 
 **You own the skill's voice.**
 
-1. Use the **create-skill** skill (Cursor's built-in for authoring SKILL.md files).
+1. Write the frontmatter with only `name` (equal to the directory name), `description`, and optionally `license`, `allowed-tools`, `disable-model-invocation`. Some harnesses ignore `disable-model-invocation`, so a slash-only skill's description names its `/command` or an explicit request phrase.
 2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
 3. Test cases if structural. Skip if subjective.
 4. Run **Opening a PR**.

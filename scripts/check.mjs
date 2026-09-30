@@ -7,6 +7,7 @@ export const PORTABLE_KEYS = new Set(["name", "description", "license", "allowed
 export const BANNED_TERMS = [
   "AskQuestion", "Task tool", "subagent_type", "generalPurpose", "pstack-models", "setup-pstack",
   "cursor-team-kit", "create-skill", "~/.cursor/", "poteto-mode", "poteto-agent",
+  "grok-", "gpt-5", "claude-opus-",
 ];
 export const TERM_SCAN_ROOTS = ["skills"];
 export const ALLOWED_TERMS = {

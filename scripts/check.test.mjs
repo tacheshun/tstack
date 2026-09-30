@@ -81,3 +81,12 @@ test("banned terms are errors unless allowlisted for that file", () => {
   ]);
   assert.deepEqual(check(root, { "skills/alpha/SKILL.md": ["AskQuestion"], "skills/alpha/scripts/x.sh": ["~/.cursor/"] }), []);
 });
+
+test("model slugs are banned terms", () => {
+  const root = fixture({ "skills/alpha/SKILL.md": skill("alpha", "Use grok-4.7-xhigh-fast, gpt-5.6-sol-max, or claude-opus-5-5-max.\n") });
+  assert.deepEqual(check(root), [
+    'skills/alpha/SKILL.md:6: banned term "grok-"',
+    'skills/alpha/SKILL.md:6: banned term "gpt-5"',
+    'skills/alpha/SKILL.md:6: banned term "claude-opus-"',
+  ]);
+});
