@@ -35,3 +35,22 @@ The playbooks say "PR" and `<pr>`. On GitLab, read those as MR and `<mr>`.
 Pass the description from a file: `--body-file` on `gh`, `--description-file` on `glab`. Never pass `--draft` or `--wip`.
 
 GitLab stacks work the same way as GitHub stacks. A child MR targets its parent's branch. When the parent merges, retarget the child to trunk yourself unless the project retargets it automatically.
+
+## Babysit and ship
+
+`playbooks/babysit.md` and `playbooks/shipping.md` use these. `scripts/watch-pr/watch-pr` reads GitHub only. On Origin and GitLab, poll with the forge's own commands.
+
+| Operation | Origin | GitHub | GitLab |
+| --- | --- | --- | --- |
+| Status | `origin pr view <pr> --checks --comments` | `scripts/watch-pr/watch-pr` | `glab mr view <mr> --output json` |
+| Threads | `origin pr thread list <pr>` | `scripts/watch-pr/watch-pr` | `glab mr view <mr> --unresolved --output json` |
+| Watch CI | `origin pr checks <pr> --watch` | `scripts/watch-pr/watch-pr` | `glab ci status --branch <branch> --wait` |
+| Reply | `origin pr thread reply <thread-id> <pr> --body-file <file>` | `gh api --method POST "repos/<owner>/<repo>/pulls/<pr>/comments/<comment-id>/replies" --input <payload.json>` | `glab api --method POST projects/:id/merge_requests/<mr>/discussions/<discussion-id>/notes -F body=@<file>` |
+| Merge now | `origin pr merge <pr> --squash` | `gh pr merge <pr> --squash` | `glab mr merge <mr> --squash --auto-merge=false --sha <head> --yes` |
+| Merge when ready | `origin pr merge <pr> --squash --auto` | `gh pr merge <pr> --squash --auto` | `glab mr merge <mr> --squash --sha <head> --yes` |
+
+Put every reply body in a file. Never interpolate comment text or a reply into a shell command.
+
+`glab mr merge` sets auto-merge by default. Pass `--auto-merge=false` to merge only when the MR is mergeable now. Pass `--sha` with the verified head so a later push cannot land unverified. Drop `--squash` when the project forbids squash.
+
+GitLab state lives in the MR JSON. `detailed_merge_status` is `mergeable` when the MR can merge. Other values name the blocker: `ci_still_running`, `ci_must_pass`, `not_approved`, `discussions_not_resolved`, `conflict`, `need_rebase`, `draft_status`. `state` is `opened`, `merged`, or `closed`. `merged_at` is set once it lands. `merge_when_pipeline_succeeds` is true while auto-merge is armed. `head_pipeline.status` is the pipeline result. If the project uses merge trains, `glab mr merge` adds the MR to the train. Treat the train as a merge queue.
