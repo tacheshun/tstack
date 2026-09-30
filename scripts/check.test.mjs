@@ -64,10 +64,10 @@ test("backtick skill paths resolve from the skill root; placeholders are ignored
 
 test("bold skill references must name an existing skill", () => {
   const root = fixture({
-    "skills/alpha/SKILL.md": skill("alpha", "Use the **deslop** skill, the **laziness-protocol** principle skill, and the **principle-laziness-protocol** skills.\n"),
+    "skills/alpha/SKILL.md": skill("alpha", "Use the **ghost** skill, the **laziness-protocol** principle skill, and the **principle-laziness-protocol** skills.\n"),
     "skills/principle-laziness-protocol/SKILL.md": skill("principle-laziness-protocol"),
   });
-  assert.deepEqual(check(root), ['skills/alpha/SKILL.md:6: unknown skill "deslop"']);
+  assert.deepEqual(check(root), ['skills/alpha/SKILL.md:6: unknown skill "ghost"']);
 });
 
 test("banned terms are errors unless allowlisted for that file", () => {
@@ -89,4 +89,18 @@ test("model slugs are banned terms", () => {
     'skills/alpha/SKILL.md:6: banned term "gpt-5"',
     'skills/alpha/SKILL.md:6: banned term "claude-opus-"',
   ]);
+});
+
+test("cursor-team-kit skill names are banned terms", () => {
+  const root = fixture({ "skills/alpha/SKILL.md": skill("alpha", "Run `/deslop`, then drive it with control-ui or control-cli.\n") });
+  assert.deepEqual(check(root), [
+    'skills/alpha/SKILL.md:6: banned term "deslop"',
+    'skills/alpha/SKILL.md:6: banned term "control-ui"',
+    'skills/alpha/SKILL.md:6: banned term "control-cli"',
+  ]);
+});
+
+test("the em dash character is a banned term", () => {
+  const root = fixture({ "skills/alpha/SKILL.md": skill("alpha", "Fast \u2014 and wrong.\n") });
+  assert.deepEqual(check(root), ['skills/alpha/SKILL.md:6: banned term "\u2014"']);
 });
