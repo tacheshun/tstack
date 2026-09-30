@@ -14,7 +14,7 @@ This skill orchestrates three others: an inline mining pass (see step 1), the au
 
 ### 0. Check for an existing skill
 
-Look recursively for `skills/**/*-mode/SKILL.md` in the repo and `*-mode/SKILL.md` in the harness's personal skills directory, matching the user's handle. Mode skills can live in a personal category directory (`skills/<handle>/`), not only at the top level. If one exists, ask the user to confirm intent (unless they already said "update my skill" or similar):
+Look recursively for `*-mode/SKILL.md` matching the user's handle in the repo's `skills/`, in `~/.agents/skills/`, and in the host harness's personal skills directory (Claude Code `~/.claude/skills/`, Copilot CLI `~/.copilot/skills/`, Codex `~/.codex/skills/`). Mode skills can live in a personal category directory (`skills/<handle>/`), not only at the top level. If one exists, ask the user to confirm intent, with a structured multiple-choice tool if the harness has one (unless they already said "update my skill" or similar):
 
 - Update the existing skill (default for repeat runs)
 - Start fresh (rare, ask why before doing it)
@@ -26,9 +26,16 @@ Update mode changes the rest of the flow:
 
 ### 1. Mine their history
 
-Locate the active workspace's transcripts before fanning out, per [transcripts](../recall/references/transcripts.md). Use only that location. Don't glob across every project. That crosses workspace boundaries and reads private chats from unrelated projects.
+Ask the user which history to mine:
 
-Survey recent agent conversations within that scope for recurring patterns. Run multiple parallel subagents across slices of history (e.g. last 2-4 weeks, split into 3 slices so each has enough material). Each slice mining subagent reads transcripts from the workspace-scoped path the parent provides, looks for the signals below, and returns a short structured list of patterns it saw with evidence pointers. Default signals worth hunting:
+- **This workspace** (default): the current harness's transcripts for this workspace only.
+- **This machine** (explicit opt-in): every harness's history on this machine. It crosses project boundaries, so it needs an explicit yes.
+
+Transcript locations per harness are in [transcripts](../recall/references/transcripts.md). Check each location exists before using it and skip missing ones. Never widen past the chosen scope.
+
+Mining subagents return generalized patterns, each with a count of supporting sessions. Never return project names, file paths, quoted excerpts, or secrets.
+
+Survey recent agent conversations within that scope for recurring patterns. Run multiple parallel subagents across slices of history (e.g. last 2-4 weeks, split into 3 slices so each has enough material). Each slice mining subagent reads transcripts from the in-scope paths the parent provides, looks for the signals below, and returns a short structured list of patterns it saw with evidence pointers. Default signals worth hunting:
 
 - Response preferences (length, tone, format, "dumb it down" corrections)
 - Delegation habits (subagents, models, specialized workflows, parallelism)
@@ -64,9 +71,16 @@ The **marius-mode** skill shows the shape. Read it for granularity. Don't copy i
 
 ### 4. Draft the skill
 
-Author the skill per the authoring playbook (`../marius-mode/playbooks/authoring-a-skill.md`). Placement:
+Author the skill per the authoring playbook (`../marius-mode/playbooks/authoring-a-skill.md`).
 
-- Path: preserve an existing mode skill's category. For a new mode, use `skills/<handle>/<handle>-mode/SKILL.md` when the repo has an established personal category for that handle. Otherwise default to `skills/<handle>-mode/SKILL.md` in the project (or the harness's personal skills directory if the user prefers a personal skill).
+Ask where the skill goes:
+
+- **Repo** (`skills/<handle>-mode/SKILL.md`, or the existing mode skill's path in update mode): shared through git. Only for patterns mined from personal, non-confidential history.
+- **Local layer** (`~/.agents/skills/<handle>-work/SKILL.md`): never committed. Use it for anything mined from work history. Copilot CLI, Codex, and others read `~/.agents/skills`.
+
+If the destination is inside a git repo with a remote (`git remote -v` prints something) and the mined scope included work history, stop and warn: "This will publish rules mined from work history to <remote>." Proceed only on an explicit yes.
+
+Placement details:
 - Handle: the user's first name or chosen identifier.
 - Frontmatter `description`: trigger on their name + `/<handle>-mode` + "work in their style", not on generic keywords like "write code" or "review PR".
 - Frontmatter formatting: keep `description` as one YAML scalar. Quote it or use `description: >-` with indented continuation lines when punctuation or wrapping requires it.
